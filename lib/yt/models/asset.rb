@@ -1,4 +1,5 @@
 require 'yt/models/base'
+require 'yt/models/asset_metadata'
 
 module Yt
   module Models
@@ -8,7 +9,7 @@ module Yt
       attr_reader :auth
 
       def initialize(options = {})
-        @data = options[:data]
+        @data = options.fetch(:data, {})
         @id = options[:id]
         @auth = options[:auth]
       end
@@ -24,6 +25,14 @@ module Yt
       has_one :ownership
       delegate :general_owners, :performance_owners, :synchronization_owners,
         :mechanical_owners, to: :ownership
+
+      def metadata_mine
+        @metadata_mine ||= metadata('mine')
+      end
+
+      def metadata_effective
+        @metadata_effective ||= metadata('effective')
+      end
 
       # Soft-deletes the asset.
       # @note YouTube API does not provide a +delete+ method for the Asset
@@ -82,6 +91,16 @@ module Yt
       # end
 
     private
+    
+      def metadata(type)
+        raise ArgumentError.new("Invalid metadata type") unless ['mine', 'effective'].include?(type)
+        metadata_param = "metadata#{type.capitalize}"
+        if @data[metadata_param].present?
+          Yt::Models::AssetMetadata.new(data: @data[metadata_param])
+        else
+          Yt::Collections::Assets.new(auth: @auth).where(id: id, fetch_metadata: type).first.send(:metadata, type)
+        end
+      end
 
       # @see https://developers.google.com/youtube/partner/docs/v1/assets/patch
       def patch_params
