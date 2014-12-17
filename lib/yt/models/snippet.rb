@@ -132,7 +132,7 @@ module Yt
       # @return [nil] if the resource is a playlist.
       # @return [nil] if the resource is a video.
       def video_id
-        resource_id['videoId']
+        resource_id['videoId'] || @data[:videoId]
       end
 
       # @return [Yt::Models::Video] the video the playlist item represents in
@@ -142,6 +142,16 @@ module Yt
       # @return [nil] if the resource is a video.
       def video
         @video ||= Video.new id: video_id, auth: @auth if video_id
+      end
+
+      has_attribute :is_public
+
+      has_attribute :total_reply_count
+
+      has_attribute :can_reply
+
+      def top_level_comment
+        @top_level_comment ||= Yt::Comment.new(data: data['topLevelComment']) if data['topLevelComment']
       end
 
       # Returns whether YouTube API includes tags in this snippet.
@@ -155,6 +165,7 @@ module Yt
       def includes_tags
         @includes_tags ||= @data.fetch :includes_tags, true
       end
+
 
     private
 
