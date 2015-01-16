@@ -35,6 +35,10 @@ module Yt
       #   means that the content has been claimed by a YouTube content partner.
       has_attribute :licensed?, default: false, from: :licensed_content
 
+      has_attribute :related_playlists do
+        @data["relatedPlaylists"].map { |k,v| [k, Playlist.new(id: v)] }.to_h
+      end
+
     private
 
       # @return [Integer] the duration of the resource as reported by YouTube.

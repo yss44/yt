@@ -13,6 +13,9 @@ module Yt
       #   @return [Yt::Collections::Playlists] the channel’s playlists.
       has_many :playlists
 
+      has_one :content_detail
+      delegate :related_playlists, to: :content_detail
+
       # @macro has_report
       has_report :earnings
 
