@@ -16,6 +16,9 @@ module Yt
       has_one :content_detail
       delegate :related_playlists, to: :content_detail
 
+      has_one :branding_setting
+      delegate :keywords, :banner_image_url, to: :branding_setting
+
       # @macro has_report
       has_report :earnings
 
