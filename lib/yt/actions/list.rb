@@ -13,6 +13,19 @@ module Yt
         first.tap{|item| raise Errors::NoItems, error_message unless item}
       end
 
+      def to_a
+        map{|v| v}
+      end
+
+      def with_pagenation
+        @pagenatable = true
+        self
+      end
+
+      def next_page_token
+        @page_token if @pagenatable
+      end
+
     private
 
       def list
@@ -75,7 +88,7 @@ module Yt
       end
 
       def more_pages?
-        @last_index.zero? || !@page_token.nil?
+        @last_index.zero? || (!@page_token.nil? && !@pagenatable)
       end
 
       def next_page
