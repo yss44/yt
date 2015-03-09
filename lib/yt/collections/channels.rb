@@ -59,7 +59,7 @@ module Yt
 
       def use_list_endpoint?
         @where_params ||= {}
-        @parent.present? && @parent.class == Yt::Models::Account
+        @parent.present? || (@where_params.keys & [:category_id, :for_username, :id, :managed_by_me]).any?
       end
     end
   end
