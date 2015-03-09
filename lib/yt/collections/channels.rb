@@ -59,7 +59,7 @@ module Yt
 
       def use_list_endpoint?
         @where_params ||= {}
-        @parent.nil? && @parent.class == Yt::Models::Account
+        @parent.present? && @parent.class == Yt::Models::Account
       end
     end
   end
